@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, Helvetica;
+    margin: 0;
+    padding: 0;
+}
+
+.animWindow {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    float: left;
+    height: 151px;
+}
+
+.animContainer {
+    width: 182%;
+    margin: 0;
+    background-color: red;
+    margin: 0;
+    padding: 0;
+    -webkit-transition: margin-left 300ms cubic-bezier(0.000, 0.000, 0.580, 1.000);
+    -moz-transition: margin-left 300ms cubic-bezier(0.000, 0.000, 0.580, 1.000);
+    -ms-transition: margin-left 300ms cubic-bezier(0.000, 0.000, 0.580, 1.000);
+    -o-transition: margin-left 300ms cubic-bezier(0.000, 0.000, 0.580, 1.000);
+    transition: margin-left 300ms cubic-bezier(0.000, 0.000, 0.580, 1.000); /* ease-out */
+}
+
+.animContainer .animItem {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+.animButton {
+    width: 60px;
+    height: 60px;
+    display: inline-block;
+    background: #999;
+    color: #fff;
+    position: absolute;
+    top: 58px;
+    z-index: 999;
+}
+
+#back {
+    left: 0;
+    background: url('../images/controls/gal_back.png') no-repeat #999 left top;
+}
+
+#next {
+    left: 765px;
+    background: url('../images/controls/gal_next.png') no-repeat #999 left top;
+}
+
+#back.animButton:hover,
+#next.animButton:hover {
+    background-color: #ff9900;
+}
+
+.animContainer img {
+    max-width: 100%;
+}
+
+
+
