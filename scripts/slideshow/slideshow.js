@@ -1,44 +1,32 @@
+/*global define*/
 define(function () {
-
+    'use strict';
     var slideShow = {},
         slideShowWindow,
         slidesContainer,
         next,
         prev;
 
-    slideShow.init = function(slidesWindowDom, slidesContainerDom, prevDom, nextDom, slidesDom) {
-        slideShowWindow = slidesWindowDom;
+    slideShow.init = function (slidesWindowDom, slidesContainerDom, prevDom, nextDom, slidesDom) {
+        this.slideShowWindow = slidesWindowDom;
         this.slidesContainer = slidesContainerDom;
         this.next = nextDom;
         this.prev = prevDom;
         this.slides = slidesDom;
+
+        var itemWidth = 100 / this.slides.length,
+            i;
+
+        for (i = 0; i < this.slides.length; i += 1) {
+            this.slides[i].parentNode.style.width = itemWidth + '%';
+        }
+
     };
 
-    slideShow.getSlideShowWindow = function() {
-        return slideShowWindow;
-    };
-
-    slideShow.getSlidesContainer = function() {
-        return this.slidesContainer;
-    };
-    
-    slideShow.getPrev = function() {
-        return this.prev;
-    };
-    
-    slideShow.getNext = function() {
-        return this.next;
-    };
-
-    slideShow.getSlides = function() {
-        return this.slides;
-    }
-
-    slideShow.run = function() {
+    slideShow.run = function () {
 
         var  mainContainer = this.slidesContainer,
-            animWindow = slideShowWindow,
-            numImages,
+            animWindow = this.slideShowWindow,
             maxMove,
             mainContainerWidth,
             back = this.prev,
@@ -46,8 +34,11 @@ define(function () {
             slides = this.slides,
             numImages = this.slides.length;
 
-        this.slidesContainer.style.marginLeft = '0%';
-        setItemWidth();
+
+        function setWindowHeight() {
+            animWindow.style.height = slides[0].offsetHeight + 'px';
+        }
+
         setWindowHeight();
         checkButtons();
         positionButtons();
@@ -68,22 +59,14 @@ define(function () {
         }
 
         function setItemWidth() {
-            var items = document.querySelectorAll('.animItem'),
-                itemWidth = 100/numImages,
-                i;
 
-            for(i = 0; i < items.length;i++) {
-                items[i].style.width = itemWidth + '%';
-            }
         }
 
         function getItemWidth() {
             return parseFloat(document.querySelector('.animItem').style.width);
         }
 
-        function setWindowHeight() {
-            animWindow.style.height = slides[0].offsetHeight + 'px';
-        }
+
 
         function resize() {
             setWindowHeight();
@@ -152,6 +135,28 @@ define(function () {
         }
 
     };
+
+
+    slideShow.getSlideShowWindow = function () {
+        return this.slideShowWindow;
+    };
+
+    slideShow.getSlidesContainer = function () {
+        return this.slidesContainer;
+    };
+
+    slideShow.getPrev = function () {
+        return this.prev;
+    };
+
+    slideShow.getNext = function () {
+        return this.next;
+    };
+
+    slideShow.getSlides = function () {
+        return this.slides;
+    };
+
 
     return slideShow;
 
