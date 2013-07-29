@@ -25,9 +25,9 @@ require(["slideshow"], function (slideshow) {
     test("init with correct vars", function () {
         ok(typeof slideshow.getSlideShowWindow() === 'object', "Passed!");
         ok(typeof slideshow.getSlidesContainer() === 'object', "Passed!");
-        ok(slideshow.getPrev().title === 'Back', "Passed!")
-        ok(slideshow.getNext().title === 'Next', "Passed!")
-        ok(slideshow.getSlides().length === 5, "Passed!")
+        ok(slideshow.getPrev().title === 'Back', "Passed!");
+        ok(slideshow.getNext().title === 'Next', "Passed!");
+        ok(slideshow.getSlides().length === 5, "Passed!");
     });
 
     test("Set individual slide width %s", function () {
@@ -37,8 +37,9 @@ require(["slideshow"], function (slideshow) {
         }
     });
 
-    test("Set individual slide width %s", function () {
+    test("Set slide height", function () {
         slideshow.run();
         ok(document.getElementsByClassName('animWindow')[0].style.height === '21px', "Passed!");
     });
+
 });

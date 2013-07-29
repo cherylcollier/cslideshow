@@ -4,8 +4,10 @@ define(function () {
     var slideShow = {},
         slideShowWindow,
         slidesContainer,
+        mainContainerWidth,
         next,
-        prev;
+        prev,
+        maxMove;
 
     slideShow.init = function (slidesWindowDom, slidesContainerDom, prevDom, nextDom, slidesDom) {
         this.slideShowWindow = slidesWindowDom;
@@ -23,117 +25,94 @@ define(function () {
 
     };
 
+    slideShow.setWindowHeight = function () {
+        slideShow.slideShowWindow.style.height = slideShow.slides[0].offsetHeight + 'px';
+    };
+
+    slideShow.checkButtons = function () {
+
+        if (!slideShow.slidesContainer.style.marginLeft) {
+            slideShow.slidesContainer.style.marginLeft = 0;
+        }
+
+        slideShow.prev.style.display = slideShow.next.style.display = 'inline-block';
+
+        if (parseFloat(slideShow.slidesContainer.style.marginLeft) === 0) {
+            slideShow.prev.style.display = 'none';
+        }
+
+        if (((parseFloat(slideShow.slidesContainer.style.marginLeft)  * -1) + 1) >= (parseFloat(slideShow.maxMove) * -1)) {
+            slideShow.next.style.display = 'none';
+        }
+    };
+
+    slideShow.positionButtons = function () {
+        var imHeight = slideShow.slides[0].offsetHeight;
+        slideShow.next.style.left = (parseFloat(slideShow.slideShowWindow.offsetWidth) - parseFloat(slideShow.next.offsetWidth)) + 'px';
+        slideShow.next.style.top = ((imHeight - parseFloat(slideShow.next.offsetHeight)) / 2) + 'px';
+        slideShow.prev.style.top = ((imHeight - parseFloat(slideShow.prev.offsetHeight)) / 2) + 'px';
+    };
+
+    slideShow.setMainContainerWidth = function () {
+        var itemWidth = slideShow.slides[0].offsetWidth,
+            totalItemWidth,
+            windowWidth;
+
+        windowWidth = parseFloat(document.querySelector('.animWindow').offsetWidth);
+        totalItemWidth = parseFloat(itemWidth) * slideShow.slides.length;
+        slideShow.mainContainerWidth = ((totalItemWidth / windowWidth) * 100) + '%';
+    };
+
+    slideShow.move = function (event) {
+        var moveTo,
+            next = 'next',
+            back = 'back',
+            offset = 1.82,
+            button = event.target.id,
+            itemWidth = parseFloat(slideShow.slides[0].parentNode.style.width),
+            x,
+            y = parseFloat(slideShow.slidesContainer.style.marginLeft);
+
+        maxMove = (parseFloat(slideShow.mainContainerWidth) - 100) * -1;
+        slideShow.maxMove = maxMove;
+
+        x = -parseFloat(maxMove);
+
+        if ((button === next) && (parseFloat(slideShow.slidesContainer.style.marginLeft) > parseFloat(maxMove))) {
+            if ((x + y) < parseFloat(itemWidth)) {
+                moveTo = ((parseFloat(slideShow.slidesContainer.style.marginLeft) - (x + y)));
+            } else {
+                moveTo = (parseFloat(slideShow.slidesContainer.style.marginLeft) - (parseFloat(itemWidth) * offset));
+            }
+        } else {
+            if (button === back && (parseFloat(slideShow.slidesContainer.style.marginLeft) !== 0)) {
+                if ((y * -1) < parseFloat(itemWidth)) {
+                    moveTo = 0;
+                } else {
+                    moveTo = (parseFloat(slideShow.slidesContainer.style.marginLeft) + (parseFloat(itemWidth) * offset));
+                }
+            }
+        }
+        slideShow.slidesContainer.style.marginLeft = moveTo + '%';
+        slideShow.checkButtons();
+        slideShow.positionButtons();
+    };
+
     slideShow.run = function () {
 
-        var  mainContainer = this.slidesContainer,
-            animWindow = this.slideShowWindow,
-            maxMove,
-            mainContainerWidth,
-            back = this.prev,
-            next = this.next,
-            slides = this.slides,
-            numImages = this.slides.length;
+        slideShow.setWindowHeight();
+        slideShow.checkButtons();
+        slideShow.positionButtons();
+        slideShow.setMainContainerWidth();
 
+        slideShow.prev.addEventListener("click", slideShow.move, false);
+        slideShow.next.addEventListener("click", slideShow.move, false);
 
-        function setWindowHeight() {
-            animWindow.style.height = slides[0].offsetHeight + 'px';
-        }
-
-        setWindowHeight();
-        checkButtons();
-        positionButtons();
-        setMainContainerWidth();
-
-        next.addEventListener("click", move, false);
-        back.addEventListener("click", move, false);
-        window.onresize = resize;
-
-        function setMainContainerWidth() {
-            var itemWidth = slides[0].offsetWidth,
-                totalItemWidth,
-                windowWidth;
-
-            windowWidth = parseFloat(document.querySelector('.animWindow').offsetWidth);
-            totalItemWidth = parseFloat(itemWidth) * numImages;
-            mainContainerWidth = ((totalItemWidth/windowWidth) * 100) + '%';
-        }
-
-        function setItemWidth() {
-
-        }
-
-        function getItemWidth() {
-            return parseFloat(document.querySelector('.animItem').style.width);
-        }
-
-
-
-        function resize() {
-            setWindowHeight();
-            setMainContainerWidth();
-            positionButtons();
-        }
-
-        function positionButtons() {
-            var imHeight = slides[0].offsetHeight;
-            next.style.left = (parseFloat(animWindow.offsetWidth) - parseFloat(next.offsetWidth)) + 'px';
-            next.style.top = ((imHeight - parseFloat(next.offsetHeight))/2) + 'px';
-            back.style.top = ((imHeight - parseFloat(back.offsetHeight))/2) + 'px';
-        }
-
-        function checkButtons() {
-
-            if(!mainContainer.style.marginLeft) {
-                mainContainer.style.marginLeft = 0;
-            }
-
-            if(parseFloat(mainContainer.style.marginLeft) == 0) {
-                back.style.display = 'none';
-            } else {
-                back.style.display = 'inline-block';
-            }
-            if(((parseFloat(mainContainer.style.marginLeft)  * -1) + 1) >= (parseFloat(maxMove) * -1)) {
-                next.style.display = 'none';
-            } else {
-                next.style.display = 'inline-block';
-            }
-        }
-
-        function move(event) {
-            var i = 0,
-                moveTo,
-                next = 'next',
-                back = 'back',
-                offset = 1.82,
-                button = event.target.id,
-                itemWidth = parseFloat(getItemWidth()),
-                x,
-                y = parseFloat(mainContainer.style.marginLeft);
-
-            maxMove = (parseFloat(mainContainerWidth) - 100) * -1;
-
-            x = -parseFloat(maxMove);
-
-            if((button == next) && (parseFloat(mainContainer.style.marginLeft) > parseFloat(maxMove))) {
-                if((x + y) < parseFloat(itemWidth)) {
-                    moveTo = ((parseFloat(mainContainer.style.marginLeft ) - (x + y)) );
-                } else {
-                    moveTo =  (parseFloat(mainContainer.style.marginLeft ) - (parseFloat(itemWidth) * offset) );
-                }
-            } else {
-                if(button == back && (parseFloat(mainContainer.style.marginLeft) !== 0)) {
-                    if((y *-1) < parseFloat(itemWidth)) {
-                        moveTo = 0;
-                    } else {
-                        moveTo =  (parseFloat(mainContainer.style.marginLeft ) + (parseFloat(itemWidth) * offset) );
-                    }
-                }
-            }
-            mainContainer.style.marginLeft = moveTo + '%';
-            checkButtons();
-            positionButtons();
-        }
-
+        window.addEventListener("resize", function () {
+            slideShow.setWindowHeight();
+            slideShow.setMainContainerWidth();
+            slideShow.positionButtons();
+        }, false);
     };
 
 
@@ -157,9 +136,6 @@ define(function () {
         return this.slides;
     };
 
-
     return slideShow;
-
-
 
 });
